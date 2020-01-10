@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.board.board.model.dao.BoardDao;
 import com.spring.board.board.model.vo.Board;
-import com.spring.board.board.model.vo.FileVo;
 import com.spring.board.board.util.FileUtils;
 
 @Service("bService")
@@ -27,6 +26,7 @@ public class BoardService {
 	public ArrayList<Board> selectBoardList() {
 		return bDao.selectBoardList();
 	}
+	
 	public void insertBoard(Board boardVO, MultipartHttpServletRequest mpRequest) throws Exception {
 		//게시글 추가
 		bDao.insertBoard(boardVO);

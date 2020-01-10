@@ -30,14 +30,7 @@
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 <script type="text/javascript">
-<!--	function fn_fileDown(boardNo)
-	{
-		var file = document.createElement('form');
-		var input = document.createElement('input');
-		input.setAttribute("value",boardNo);
-		f.action="fileDown.do";
-		f.submit();
-	} -->
+
 	function fn_fileDown(boardNo){
 		var formObj = $("form[name='readForm']");
 		$("#BOARD_NO").attr("value", boardNo);

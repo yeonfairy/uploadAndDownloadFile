@@ -9,17 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.spring.board.board.model.vo.Board;
-import com.spring.board.board.model.vo.FileVo;
-
 @Repository("bDao")
 public class BoardDao {
 	
 	@Autowired
 	private SqlSessionTemplate sqlSession;
-
+	//게시판 조회
 	public ArrayList<Board> selectBoardList() {
 		return (ArrayList)sqlSession.selectList("boardMapper.selectBoardList");
 	}
+
 	//게시판 등록
 	public int insertBoard(Board board) {
 		return sqlSession.insert("boardMapper.insertBoard", board);
