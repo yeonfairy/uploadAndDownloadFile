@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="boardMapper">
+	<resultMap type="Board" id="boardResultSet">
+		<id property="boardNo" column="BOARD_NO" />
+		<result property="boardTitle" column="BOARD_TITLE" />
+		<result property="boardContent" column="BOARD_CONTENT" />
+		<result property="boardWriter" column="BOARD_WRITER" />
+		<result property="boardCount" column="BOARD_COUNT" />
+		<result property="boardPwd" column="BOARD_PWD" />
+		<result property="orgFileName" column="ORG_FILE_NAME"/>
+	</resultMap>
+
+	<select id="selectBoardList" resultMap="boardResultSet">
+	SELECT A.BOARD_NO
+         , A.BOARD_CONTENT
+         , A.BOARD_TITLE
+         , A.BOARD_WRITER
+         , A.BOARD_COUNT
+         , (SELECT ORG_FILE_NAME FROM TEST.MP_FILE WHERE BOARD_NO = A.BOARD_NO) AS ORG_FILE_NAME
+    FROM  TEST.BOARD_TB A
+    ORDER BY BOARD_NO DESC
+	</select>
+  
+	<insert id="insertBoard" parameterType="Board">
+		INSERT INTO TEST.BOARD_TB VALUES( SEQ_BOARD.NEXTVAL, #{ boardContent }, #{ boardTitle }, #{ boardWriter }, #{ boardCount }, DEFAULT )
+	</insert>
+
+	<insert id="insertBoardFile" parameterType="hashMap">
+		INSERT INTO MP_FILE(
+			FILE_NO,
+			BOARD_NO,
+			ORG_FILE_NAME,
+			STORED_FILE_NAME,
+			FILE_SIZE
+		)VALUES(
+			SEQ_MP_FILE_NO.NEXTVAL,
+			(SELECT max(BOARD_NO) keep(dense_rank first order by BOARD_NO desc) as BNO FROM TEST.BOARD_TB),
+			#{ORG_FILE_NAME},
+			#{STORED_FILE_NAME},
+			#{FILE_SIZE}
+		)
+    </insert>
+
+	<!-- 첨부파일 조회 -->
+	<select id="selectFileList" parameterType="int" resultType="hashMap">
+        SELECT 
+        A.FILE_NO,
+        A.BOARD_NO,
+		A.ORG_FILE_NAME,
+        A.STORED_FILE_NAME,
+        A.REGDATE,
+        A.DEL_GB,
+		ROUND(FILE_SIZE/1024,1) AS FILE_SIZE
+		FROM TEST.MP_FILE A
+		WHERE BOARD_NO = A.BOARD_NO
+		AND A.BOARD_NO = #{ boardNo }
+	</select>
+	
+	<!-- 첨부파일 다운 -->
+	<select id="selectFileInfo"  parameterType="int" resultType="hashMap">
+        SELECT 
+        A.FILE_NO,
+        A.BOARD_NO,
+		A.ORG_FILE_NAME,
+        A.STORED_FILE_NAME,
+        A.REGDATE,
+        A.DEL_GB,
+		ROUND(FILE_SIZE/1024,1) AS FILE_SIZE
+		FROM TEST.MP_FILE A
+		WHERE BOARD_NO = A.BOARD_NO
+		AND A.BOARD_NO = #{ boardNo }
+	</select>
+	
+	<select id="selectBoardOne" parameterType="int"
+		resultMap="boardResultSet">
+		SELECT A.*, (SELECT ORG_FILE_NAME FROM TEST.MP_FILE WHERE BOARD_NO = A.BOARD_NO
+		AND A.BOARD_NO = #{ boardNo } ) AS ORG_FILE_NAME FROM TEST.BOARD_TB A
+		WHERE BOARD_NO = #{ boardNo }
+	</select>
+
+	<update id="updateBoardCount" parameterType="int">
+		UPDATE BOARD_TB
+		SET
+		BOARD_COUNT = BOARD_COUNT + 1
+		WHERE BOARD_NO = #{ boardNo }
+	</update>
+
+	<select id="selectBoardPwd" parameterType="Board"
+		resultType="int">
+		SELECT COUNT(*) FROM BOARD_TB
+		WHERE BOARD_NO = #{ boardNo }
+		AND BOARD_PWD = #{ boardPwd }
+	</select>
+
+	<update id="updateBoardPwd" parameterType="Board">
+		UPDATE BOARD_TB
+		SET
+		BOARD_PWD = #{ boardPwd }
+		WHERE BOARD_NO = #{ boardNo }
+	</update>
+</mapper>
