@@ -1,9 +1,8 @@
 package com.spring.board.board.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,6 @@ import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,12 +26,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.board.board.model.service.BoardService;
 import com.spring.board.board.model.vo.Board;
@@ -45,9 +44,8 @@ public class BoardController {
 	@Autowired
 	private BoardService bService;
 
-
 	private static List<Board> eList = new ArrayList<Board>();
-	
+
 	@RequestMapping(value = "board.do")
 	public String boardView(Model model, Board boardVo) throws Exception {
 
@@ -62,87 +60,37 @@ public class BoardController {
 
 		return "board/boardView";
 	}
-	/*
-	 //엑셀 업로드 + 읽어서 DB 저장
-	@RequestMapping(value = "excelUploadAjax.do", method = RequestMethod.POST)
-    private List<Board> parseTableExcel(String excelFile) throws Exception {
 
-		 
-	        List<Board> excelVOList = new ArrayList<Board>();
-	        try {
-	       HSSFWorkbook wbs = new HSSFWorkbook(new File("ExcelFormDown.xls"));
-
-	           Sheet sheet = (Sheet) wbs.getSheetAt(0);
-	 
-	            int lastCellNum = 0;
+	@ResponseBody
+	@RequestMapping(value = "/excelUploadAjax", method = RequestMethod.POST)
+	public String excelUploadAjax(Board board, MultipartHttpServletRequest request) throws Exception {
+		MultipartFile excelFile = request.getFile("excelFile");
+		System.out.println("엑셀 파일 업로드 컨트롤러");
 	
-	            for (int i = sheet.getFirstRowNum(); i <= sheet.getLastRowNum(); i++) {
-	                Row row = sheet.getRow(i);
- 
-	                    // 필수항목 체크
-	                    if (StringUtils.isEmpty(cellValue(row.getCell(1)))) {
-	                        Board excelVO = new Board();
-	                        excelVO.setBoardNo(Integer.parseInt(cellValue(row.getCell(0))));
-	                        excelVO.setBoardTitle(cellValue(row.getCell(0)));
-	                        excelVO.setBoardContent(cellValue(row.getCell(0)));
-	                        excelVO.setBoardWriter(cellValue(row.getCell(0)));
-	                        excelVO.setBoardCount(Integer.parseInt(cellValue(row.getCell(0))));
-	                        excelVO.setBoardPwd(cellValue(row.getCell(0)));
-	 
-	                        excelVOList.add(excelVO);
-	                    }
-	                }
-	           
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            throw new Exception("오류가 있는 데이터가 있습니다." + e.getMessage());
-	        }
-	 
-	        return excelVOList;
-	      
-	    }
-  */
+		if (excelFile == null || excelFile.isEmpty()) {
+			throw new RuntimeException("엑셀파일을 선택 해 주세요.");
+		}
 
+		File destFile = new File("D:\\" + excelFile.getOriginalFilename());
+		try {
+			excelFile.transferTo(destFile);
+		} catch (IllegalStateException | IOException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		System.out.println("destFile :" + destFile);
+		bService.excelUpload(board, destFile);
 
-	private String cellValue(Cell cell) {
-		   String value = null;
-	        if (cell == null) value = "";
-	        else {
-	            switch (cell.getCellType()) { //cell 타입에 따른 데이타 저장
-	            case Cell.CELL_TYPE_FORMULA:
-	                value = cell.getCellFormula();
-	                break;
-	            case Cell.CELL_TYPE_NUMERIC:
-	                if (DateUtil.isCellDateFormatted(cell)) {
-	                    //you should change this to your application date format
-	                    SimpleDateFormat objSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	                    value = "" + objSimpleDateFormat.format(cell.getDateCellValue());
-	                } else {
-	                    value = "" + String.format("%.0f", new Double(cell.getNumericCellValue()));
-	                }
-	                break;
-	            case Cell.CELL_TYPE_STRING:
-	                value = "" + cell.getStringCellValue();
-	                break;
-	            case Cell.CELL_TYPE_BLANK:
-	                //value=""+cell.getBooleanCellValue();
-	                value = "";
-	                break;
-	            case Cell.CELL_TYPE_ERROR:
-	                value = "" + cell.getErrorCellValue();
-	                break;
-	            default:
-	            }
-	        }
-	 
-	        return value.trim();
-	    }
-	
+	    destFile.delete();
+
+		return "board/FileUploadForm";
+	}
+
 	// 첨부파일 다운로드
 	@RequestMapping(value = "fileDown.do")
-	public String fileDown(@RequestParam int boardNo, Board board, HttpServletResponse response, MultipartHttpServletRequest mpRequest) throws Exception {
+	public String fileDown(@RequestParam int boardNo, Board board, HttpServletResponse response,
+			MultipartHttpServletRequest mpRequest) throws Exception {
 		// System.out.println("fileDown.fileDown::::::::::::::::::::::::::::::::::"+request.getParameter("boardNo"));
-		
+
 		Map<String, Object> resultMap = bService.selectFileInfo(boardNo);
 		if (resultMap != null) {
 
@@ -151,7 +99,7 @@ public class BoardController {
 			// 파일을 저장했던 위치에서 첨부파일을 읽어 byte[]형식으로 변환한다.
 			byte fileByte[] = org.apache.commons.io.FileUtils
 					.readFileToByteArray(new File("C:\\work\\upload\\" + originalFileName));
-			
+
 			response.setContentType("application/java-archive"); // jar파일로 다운로드
 			response.setContentType("application/octet-stream"); // 다운로드시 다른이름으로 저장이 뜨도록 설정
 			response.setContentLength(fileByte.length);
@@ -163,14 +111,14 @@ public class BoardController {
 		} else {
 			return "board/boardDetail";
 		}
-		
+
 		return "board/boardDetail";
 	}
-	
+
 	// 엑셀 파일 다운로드
 	@RequestMapping(value = "excelDown.do")
 	public void excelDown(HttpServletResponse response) throws Exception {
-		    List<Board> list = bService.selectBoardList();
+		List<Board> list = bService.selectBoardList();
 
 		// 워크북 생성
 		Workbook wb = new HSSFWorkbook();
@@ -216,7 +164,7 @@ public class BoardController {
 		cell = row.createCell(5);
 		cell.setCellStyle(headStyle);
 		cell.setCellValue("첨부파일");
-		
+
 		// 데이터 부분 생성
 		for (Board vo : list) {
 			row = sheet.createRow(rowNo++);
@@ -245,69 +193,70 @@ public class BoardController {
 		// 엑셀 출력
 		wb.write(response.getOutputStream());
 		wb.close();
-		
+
 	}
 
 	// 엑셀 파일 다운로드
 	@RequestMapping(value = "excelFormDown.do")
 	public void excelFormDown(HttpServletResponse response) throws Exception {
 
-	// 워크북 생성
-	Workbook wb = new HSSFWorkbook();
-	Sheet sheet = wb.createSheet("게시판");
-	Row row = null;
-	Cell cell = null;
-	int rowNo = 0;
-	// 테이블 헤더용 스타일
-	CellStyle headStyle = wb.createCellStyle();
-	// 가는 경계선을 가집니다.
-	headStyle.setBorderTop(BorderStyle.THIN);
-	headStyle.setBorderBottom(BorderStyle.THIN);
-	headStyle.setBorderLeft(BorderStyle.THIN);
-	headStyle.setBorderRight(BorderStyle.THIN);
-	// 배경색은 노란색입니다.
-	headStyle.setFillForegroundColor(HSSFColorPredefined.YELLOW.getIndex());
-	headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	// 데이터는 가운데 정렬합니다.
-	headStyle.setAlignment(HorizontalAlignment.CENTER);
-	// 데이터용 경계 스타일 테두리만 지정
-	CellStyle bodyStyle = wb.createCellStyle();
-	bodyStyle.setBorderTop(BorderStyle.THIN);
-	bodyStyle.setBorderBottom(BorderStyle.THIN);
-	bodyStyle.setBorderLeft(BorderStyle.THIN);
-	bodyStyle.setBorderRight(BorderStyle.THIN);
-	// 헤더 생성
-	row = sheet.createRow(rowNo++);
-	cell = row.createCell(0);
-	cell.setCellStyle(headStyle);
-	cell.setCellValue("번호");
-	cell = row.createCell(1);
-	cell.setCellStyle(headStyle);
-	cell.setCellValue("제목");
-	cell = row.createCell(2);
-	cell.setCellStyle(headStyle);
-	cell.setCellValue("내용");
-	cell = row.createCell(3);
-	cell.setCellStyle(headStyle);
-	cell.setCellValue("작성자");
-	cell = row.createCell(4);
-	cell.setCellStyle(headStyle);
-	cell.setCellValue("조회수");
-	cell = row.createCell(5);
-	cell.setCellStyle(headStyle);
-	cell.setCellValue("비밀번호");
-	
-	// 데이터 부분 생성
+		// 워크북 생성
+		Workbook wb = new HSSFWorkbook();
+		Sheet sheet = wb.createSheet("게시판");
+		Row row = null;
+		Cell cell = null;
+		int rowNo = 0;
+		// 테이블 헤더용 스타일
+		CellStyle headStyle = wb.createCellStyle();
+		// 가는 경계선을 가집니다.
+		headStyle.setBorderTop(BorderStyle.THIN);
+		headStyle.setBorderBottom(BorderStyle.THIN);
+		headStyle.setBorderLeft(BorderStyle.THIN);
+		headStyle.setBorderRight(BorderStyle.THIN);
+		// 배경색은 노란색입니다.
+		headStyle.setFillForegroundColor(HSSFColorPredefined.YELLOW.getIndex());
+		headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		// 데이터는 가운데 정렬합니다.
+		headStyle.setAlignment(HorizontalAlignment.CENTER);
+		// 데이터용 경계 스타일 테두리만 지정
+		CellStyle bodyStyle = wb.createCellStyle();
+		bodyStyle.setBorderTop(BorderStyle.THIN);
+		bodyStyle.setBorderBottom(BorderStyle.THIN);
+		bodyStyle.setBorderLeft(BorderStyle.THIN);
+		bodyStyle.setBorderRight(BorderStyle.THIN);
+		// 헤더 생성
+		row = sheet.createRow(rowNo++);
+		cell = row.createCell(0);
+		cell.setCellStyle(headStyle);
+		cell.setCellValue("번호");
+		cell = row.createCell(1);
+		cell.setCellStyle(headStyle);
+		cell.setCellValue("제목");
+		cell = row.createCell(2);
+		cell.setCellStyle(headStyle);
+		cell.setCellValue("내용");
+		cell = row.createCell(3);
+		cell.setCellStyle(headStyle);
+		cell.setCellValue("작성자");
+		cell = row.createCell(4);
+		cell.setCellStyle(headStyle);
+		cell.setCellValue("조회수");
+		cell = row.createCell(5);
+		cell.setCellStyle(headStyle);
+		cell.setCellValue("비밀번호");
 
-	// 컨텐츠 타입과 파일명 지정
-	response.setContentType("ms-vnd/excel");
-	response.setHeader("Content-Disposition", "attachment;filename=ExcelFormDown.xls");
-	// 엑셀 출력
-	wb.write(response.getOutputStream());
-	wb.close();
+		// 데이터 부분 생성
 
-}
-	//게시판 등록
+		// 컨텐츠 타입과 파일명 지정
+		response.setContentType("ms-vnd/excel");
+		response.setHeader("Content-Disposition", "attachment;filename=ExcelFormDown.xls");
+		// 엑셀 출력
+		wb.write(response.getOutputStream());
+		wb.close();
+
+	}
+
+	// 게시판 등록
 	@RequestMapping(value = "insertForm.do", method = RequestMethod.GET)
 	public String boardInsertView() {
 		return "board/boardInsert";
@@ -359,10 +308,10 @@ public class BoardController {
 		int result = bService.updateBoardPwd(new Board(bNo, pwd));
 		return result + "";
 	}
-	
-	//엑셀 업로드 형식
-	@RequestMapping(value="fileUpload.do", method=RequestMethod.GET)
-	public String showForm(ModelMap model){
+
+	// 엑셀 업로드 형식
+	@RequestMapping(value = "fileUpload.do", method = RequestMethod.GET)
+	public String showForm(ModelMap model) {
 
 		return "board/FileUploadForm";
 	}

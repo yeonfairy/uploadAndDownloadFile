@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.board.board.model.dao.BoardDao;
 import com.spring.board.board.model.vo.Board;
+import com.spring.board.board.util.ExcelRead;
+import com.spring.board.board.util.ExcelReadOption;
 import com.spring.board.board.util.FileUtils;
 
 @Service("bService")
@@ -48,7 +50,35 @@ public class BoardService {
 		Map<String, Object> resultMap = new HashMap<String,Object>();
 		return  bDao.selectFileInfo(boardNo);
 	}
-	
+	//엑셀 업로드
+    public void excelUpload(Board boardVO, File destFile) throws Exception{
+    	List<Board> list = bDao.selectBoardList();
+        ExcelReadOption excelReadOption = new ExcelReadOption();
+        excelReadOption.setFilePath(destFile.getAbsolutePath());
+        excelReadOption.setOutputColumns("A","B","C","D","E","F");
+        excelReadOption.setStartRow(2);
+        
+        
+        List<Map<String, String>>excelContent =ExcelRead.read(excelReadOption);
+        List<String> elist = new ArrayList();
+
+        for(Map<String, String> article: excelContent){
+            System.out.println(article.get("A"));
+            boardVO.setBoardNo(Integer.parseInt(article.get("A")));
+            System.out.println(article.get("B"));
+            boardVO.setBoardTitle(article.get("B"));
+            System.out.println(article.get("C"));
+            boardVO.setBoardContent(article.get("C"));
+            System.out.println(article.get("D"));
+            boardVO.setBoardWriter(article.get("D"));
+            System.out.println(article.get("E"));
+            boardVO.setBoardCount(Integer.parseInt(article.get("E")));
+            System.out.println(article.get("F"));
+            boardVO.setBoardPwd(article.get("F"));
+            bDao.insertBoard(boardVO);
+        }
+    }
+    
 	public Board selectBoardOne(int boardNo) {
 		Board board = bDao.selectBoardOne(boardNo);
 		if (board != null) {
