@@ -1,5 +1,6 @@
 package com.spring.board.board.model.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,7 @@ public class BoardService {
 		}
 		return board;
 	}
-
+	
 	public int selectBoardPwd(Board board) {
 		return bDao.selectBoardPwd(board);
 	}

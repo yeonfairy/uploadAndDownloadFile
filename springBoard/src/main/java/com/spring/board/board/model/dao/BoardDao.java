@@ -23,24 +23,24 @@ public class BoardDao {
 	public int insertBoard(Board board) {
 		return sqlSession.insert("boardMapper.insertBoard", board);
 	}
-	//파일 조회
-	
+
     // 첨부파일 조회
 	public List<Map<String, Object>> selectFileList(int boardNo) throws Exception{
 		return sqlSession.selectList("boardMapper.selectFileList", boardNo);
 	}
-	
 	//첨부파일 등록
 	public void insertBoardFile(Map<String, Object> map) throws Exception {
 		sqlSession.insert("boardMapper.insertBoardFile", map);
 	}
-	
+	//엑셀 업로드
+	public int insertExcel(Board board) {
+		return sqlSession.insert("boardMapper.insertBoard", board);
+	}	
 
 	// 첨부파일 다운로드
 	public Map<String, Object> selectFileInfo(int boardNo) throws Exception {
 		return sqlSession.selectOne("boardMapper.selectFileInfo", boardNo);
 	}
-	
 	//게시판 조회
 	public Board selectBoardOne(int boardNo) {
 		return sqlSession.selectOne("boardMapper.selectBoardOne", boardNo);

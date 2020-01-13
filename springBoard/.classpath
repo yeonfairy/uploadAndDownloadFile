@@ -36,8 +36,9 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/nuriapp/.m2/repository/org/aspectj/aspectjrt/1.6.10/aspectjrt-1.6.10.jar"/>
-	<classpathentry kind="lib" path="C:/Users/nuriapp/Desktop/cos.jar"/>
-	<classpathentry kind="lib" path="C:/Users/nuriapp/Desktop/jstl.jar"/>
-	<classpathentry kind="lib" path="C:/Users/nuriapp/Desktop/standard.jar"/>
+	<classpathentry kind="lib" path="C:/Users/nuriapp/git/uploadFile/springBoard/src/main/webapp/WEB-INF/lib/cos.jar"/>
+	<classpathentry kind="lib" path="C:/Users/nuriapp/git/uploadFile/springBoard/src/main/webapp/WEB-INF/lib/jstl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/nuriapp/git/uploadFile/springBoard/src/main/webapp/WEB-INF/lib/jxl-sin_hermes.jar"/>
+	<classpathentry kind="lib" path="C:/Users/nuriapp/git/uploadFile/springBoard/src/main/webapp/WEB-INF/lib/standard.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

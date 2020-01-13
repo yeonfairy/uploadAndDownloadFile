@@ -1,11 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<%@ page session="true" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<title>ÆÄÀÏ ¾÷·Îµå</title>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>boardInsert</title>
 <style>
 #container {
 	width: 800px;
@@ -37,23 +36,38 @@ tr:nth-child(5) td {
 	text-align: center;
 }
 </style>
-		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" >
-    <form name="file" role="form" method="post" enctype="multipart/form-data"> 
-    <script>
+<script>
   src="https://code.jquery.com/jquery-3.4.1.min.js"
   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
   crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-	</head>
-	<body>
-	<table>
-		<h1>¿¢¼¿ ÆÄÀÏ ¾÷·Îµå</h1><br /></br >
+</head>
+<body>
+<div id="container">
+<h2>íŒŒì¼ ì—…ë¡œë“œ</h2>
+<form action="excelUploadAjax.do" method="post" enctype="multipart/form-data">
+<input type="hidden" name="boardWriter" value="${ loginUser.userId }">
+<input type="hidden" name="boardPwd">
+<table>
 	<tr>
-		<td>Ã·ºÎÆÄÀÏ ¾÷·Îµå</td>
+		<td>ì—‘ì…€ ì²¨ë¶€íŒŒì¼ </br>(*xlsë§Œ ì—…ë¡œë“œ ê°€ëŠ¥)</td>
 		<td>
 	 	<input type="file" name="file"><br/>
 		</td>	
 	</tr>
-	</table>
-	</body>
+	<tr>
+		<td colspan="2">
+			<button>ì €ì¥</button>
+			<form>		
+			<button type="button" onClick="window.open('','_self').close();">ì·¨ì†Œ</button>	
+			</form> 	
+		</td>
+	</tr>
+</table>
+</form>
+</div>
+</body>
+<script>
+
+</script>
 </html>

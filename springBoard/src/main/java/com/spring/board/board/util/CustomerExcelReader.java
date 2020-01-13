@@ -103,8 +103,8 @@ import com.spring.board.board.model.vo.Board;
 	                                    case 4: // 조회수
 	                                        vo.setBoardCount(Integer.parseInt(value));
 	                                        break;
-	                                    case 5: // 첨부파일
-	                                        vo.setOrgFileName(value);
+	                                    case 5: // 비번
+	                                        vo.setBoardPwd(value);
 	                                        break;
 	                                    default:
 	                                        break;
@@ -113,6 +113,7 @@ import com.spring.board.board.model.vo.Board;
 	                            }
 	                            // cell 탐색 이후 vo 추가
 	                            list.add(vo);
+	                            
 	                        }
 	                    }
 	                }

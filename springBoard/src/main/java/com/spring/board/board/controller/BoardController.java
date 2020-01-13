@@ -2,12 +2,9 @@ package com.spring.board.board.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +16,7 @@ import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,8 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,6 +44,7 @@ public class BoardController {
 	private static Logger logger = LoggerFactory.getLogger(BoardController.class);
 	@Autowired
 	private BoardService bService;
+
 
 	private static List<Board> eList = new ArrayList<Board>();
 	
@@ -64,10 +62,85 @@ public class BoardController {
 
 		return "board/boardView";
 	}
+	/*
+	 //엑셀 업로드 + 읽어서 DB 저장
+	@RequestMapping(value = "excelUploadAjax.do", method = RequestMethod.POST)
+    private List<Board> parseTableExcel(String excelFile) throws Exception {
 
+		 
+	        List<Board> excelVOList = new ArrayList<Board>();
+	        try {
+	       HSSFWorkbook wbs = new HSSFWorkbook(new File("ExcelFormDown.xls"));
+
+	           Sheet sheet = (Sheet) wbs.getSheetAt(0);
+	 
+	            int lastCellNum = 0;
+	
+	            for (int i = sheet.getFirstRowNum(); i <= sheet.getLastRowNum(); i++) {
+	                Row row = sheet.getRow(i);
+ 
+	                    // 필수항목 체크
+	                    if (StringUtils.isEmpty(cellValue(row.getCell(1)))) {
+	                        Board excelVO = new Board();
+	                        excelVO.setBoardNo(Integer.parseInt(cellValue(row.getCell(0))));
+	                        excelVO.setBoardTitle(cellValue(row.getCell(0)));
+	                        excelVO.setBoardContent(cellValue(row.getCell(0)));
+	                        excelVO.setBoardWriter(cellValue(row.getCell(0)));
+	                        excelVO.setBoardCount(Integer.parseInt(cellValue(row.getCell(0))));
+	                        excelVO.setBoardPwd(cellValue(row.getCell(0)));
+	 
+	                        excelVOList.add(excelVO);
+	                    }
+	                }
+	           
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            throw new Exception("오류가 있는 데이터가 있습니다." + e.getMessage());
+	        }
+	 
+	        return excelVOList;
+	      
+	    }
+  */
+
+
+	private String cellValue(Cell cell) {
+		   String value = null;
+	        if (cell == null) value = "";
+	        else {
+	            switch (cell.getCellType()) { //cell 타입에 따른 데이타 저장
+	            case Cell.CELL_TYPE_FORMULA:
+	                value = cell.getCellFormula();
+	                break;
+	            case Cell.CELL_TYPE_NUMERIC:
+	                if (DateUtil.isCellDateFormatted(cell)) {
+	                    //you should change this to your application date format
+	                    SimpleDateFormat objSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	                    value = "" + objSimpleDateFormat.format(cell.getDateCellValue());
+	                } else {
+	                    value = "" + String.format("%.0f", new Double(cell.getNumericCellValue()));
+	                }
+	                break;
+	            case Cell.CELL_TYPE_STRING:
+	                value = "" + cell.getStringCellValue();
+	                break;
+	            case Cell.CELL_TYPE_BLANK:
+	                //value=""+cell.getBooleanCellValue();
+	                value = "";
+	                break;
+	            case Cell.CELL_TYPE_ERROR:
+	                value = "" + cell.getErrorCellValue();
+	                break;
+	            default:
+	            }
+	        }
+	 
+	        return value.trim();
+	    }
+	
 	// 첨부파일 다운로드
 	@RequestMapping(value = "fileDown.do")
-	public String fileDown(@RequestParam int boardNo, HttpServletResponse response) throws Exception {
+	public String fileDown(@RequestParam int boardNo, Board board, HttpServletResponse response, MultipartHttpServletRequest mpRequest) throws Exception {
 		// System.out.println("fileDown.fileDown::::::::::::::::::::::::::::::::::"+request.getParameter("boardNo"));
 		
 		Map<String, Object> resultMap = bService.selectFileInfo(boardNo);
@@ -78,7 +151,7 @@ public class BoardController {
 			// 파일을 저장했던 위치에서 첨부파일을 읽어 byte[]형식으로 변환한다.
 			byte fileByte[] = org.apache.commons.io.FileUtils
 					.readFileToByteArray(new File("C:\\work\\upload\\" + originalFileName));
-
+			
 			response.setContentType("application/java-archive"); // jar파일로 다운로드
 			response.setContentType("application/octet-stream"); // 다운로드시 다른이름으로 저장이 뜨도록 설정
 			response.setContentLength(fileByte.length);
@@ -90,6 +163,7 @@ public class BoardController {
 		} else {
 			return "board/boardDetail";
 		}
+		
 		return "board/boardDetail";
 	}
 	
@@ -233,11 +307,9 @@ public class BoardController {
 	wb.close();
 
 }
-
-	
+	//게시판 등록
 	@RequestMapping(value = "insertForm.do", method = RequestMethod.GET)
 	public String boardInsertView() {
-
 		return "board/boardInsert";
 	}
 

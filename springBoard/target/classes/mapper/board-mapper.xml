@@ -21,18 +21,6 @@
     FROM  TEST.BOARD_TB A
     ORDER BY BOARD_NO DESC
 	</select>
-   <!--  
-  	<select id="selectBoardExcelList"  parameterType="int">
-	SELECT A.BOARD_NO
-         , A.BOARD_CONTENT
-         , A.BOARD_TITLE
-         , A.BOARD_WRITER
-         , A.BOARD_COUNT
-         , (SELECT ORG_FILE_NAME FROM TEST.MP_FILE WHERE BOARD_NO = A.BOARD_NO) AS ORG_FILE_NAME
-    FROM  TEST.BOARD_TB A
-    ORDER BY BOARD_NO DESC
-	</select>
-	-->
 	<insert id="insertBoard" parameterType="Board">
 		INSERT INTO TEST.BOARD_TB VALUES( SEQ_BOARD.NEXTVAL, #{ boardContent }, #{ boardTitle }, #{ boardWriter }, #{ boardCount }, DEFAULT )
 	</insert>
