@@ -104,6 +104,7 @@ public class BoardService {
         List<String> ilist = new ArrayList();
     
         for(Map<String, String> article: excelContent){
+        	System.out.println("excelContent : "+excelContent+ "article : "+article);
             System.out.println(article.get("A"));
             inputVo.setNo(Integer.parseInt(article.get("A")));
             System.out.println(article.get("B"));

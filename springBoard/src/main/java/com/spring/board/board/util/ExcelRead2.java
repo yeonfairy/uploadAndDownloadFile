@@ -60,7 +60,7 @@ public class ExcelRead2 {
                 /*
                  * 가져온 Row의 Cell의 개수를 구한다.
                  */
-                numOfCells = row.getLastCellNum();
+                numOfCells = row.getPhysicalNumberOfCells();
                 /*
                  * 데이터를 담을 맵 객체 초기화
                  */
