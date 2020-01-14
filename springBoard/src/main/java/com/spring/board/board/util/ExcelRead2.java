@@ -1,4 +1,3 @@
-
 package com.spring.board.board.util;
 
 import java.util.ArrayList;
@@ -11,8 +10,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
  
-public class ExcelRead {
-    public static List<Map<String, String>> read(ExcelReadOption excelReadOption) {
+public class ExcelRead2 {
+    public static List<Map<String, String>> read2(ExcelReadOption excelReadOption) {
         //엑셀 파일 자체
         //엑셀파일을 읽어 들인다.
         //FileType.getWorkbook() <-- 파일의 확장자에 따라서 적절하게 가져온다.
@@ -27,6 +26,7 @@ public class ExcelRead {
          * sheet에서 유효한(데이터가 있는) 행의 개수를 가져온다.
          */
         int numOfRows = sheet.getPhysicalNumberOfRows();
+        System.out.println("sheet에서 유효한(데이터가 있는) 행의 개수 :" + sheet.getPhysicalNumberOfRows());
         int numOfCells = 0;
         
         Row row = null;
@@ -90,13 +90,15 @@ public class ExcelRead {
                      * map객체의 Cell의 이름을 키(Key)로 데이터를 담는다.
                      */
                     map.put(cellName, ExcelCellRef.getValue(cell));
+                    System.out.println("ExcelCellRef:" + ExcelCellRef.getValue(cell));
                 }
                 /*
                  * 만들어진 Map객체를 List로 넣는다.
                  */
                 result.add(map);   
+                System.out.println("result:" + result.add(map));
             }   
         }
         return result;        
     }
-} 
+}

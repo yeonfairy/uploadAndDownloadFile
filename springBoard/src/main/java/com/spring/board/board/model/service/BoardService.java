@@ -16,6 +16,7 @@ import com.spring.board.board.model.dao.BoardDao;
 import com.spring.board.board.model.vo.Board;
 import com.spring.board.board.model.vo.InputVo;
 import com.spring.board.board.util.ExcelRead;
+import com.spring.board.board.util.ExcelRead2;
 import com.spring.board.board.util.ExcelReadOption;
 import com.spring.board.board.util.FileUtils;
 
@@ -70,7 +71,7 @@ public class BoardService {
         excelReadOption.setStartRow(2);
         
         
-        List<Map<String, String>>excelContent =ExcelRead.read(excelReadOption);
+        List<Map<String, String>> excelContent =ExcelRead.read(excelReadOption);
         List<String> elist = new ArrayList();
 
         for(Map<String, String> article: excelContent){
@@ -91,15 +92,17 @@ public class BoardService {
     }
 	//엑셀 업로드
     public void excelUpload2(InputVo inputVo, File destFile) throws Exception{
-    	List<InputVo> ilist = bDao.selectInputList();
+    	List<InputVo> list = bDao.selectInputList();
         ExcelReadOption excelReadOption = new ExcelReadOption();
         excelReadOption.setFilePath(destFile.getAbsolutePath());
         excelReadOption.setOutputColumns("A","B","C","D","E","F","G");
         excelReadOption.setStartRow(2);
         
         
-        List<Map<String, String>>excelContent =ExcelRead.read(excelReadOption);
-
+        List<Map<String, String>> excelContent = ExcelRead2.read2(excelReadOption);
+        System.out.println("ExcelRead2.read(excelReadOption):" + ExcelRead2.read2(excelReadOption));
+        List<String> ilist = new ArrayList();
+    
         for(Map<String, String> article: excelContent){
             System.out.println(article.get("A"));
             inputVo.setNo(Integer.parseInt(article.get("A")));
@@ -115,6 +118,8 @@ public class BoardService {
             inputVo.setInputValue5(Integer.parseInt(article.get("F")));
             System.out.println(article.get("G"));
             inputVo.setTotalValue(Integer.parseInt(article.get("G")));
+            System.out.println("DDD :"+inputVo.getInputValue1());
+            
             bDao.insertInputList(inputVo);
         }
     }

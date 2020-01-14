@@ -53,9 +53,11 @@ tr:nth-child(5) td {
 </head>
 <body>
 	<div id="container">
-		<h2>(엑셀) 입력값 합계 구하기</h2>
+		<h2>파일 업로드</h2>
 		<form action="excelUploadTotal.do" method="post"
 			enctype="multipart/form-data">
+			<input type="hidden" name="boardWriter" value="${ loginUser.userId }">
+			<input type="hidden" name="boardPwd">
 			<table>
 				<tr>
 					<td>엑셀 첨부파일 </br>(*xls만 업로드 가능)
@@ -73,35 +75,8 @@ tr:nth-child(5) td {
 							<button type="button" onClick="window.open('','_self').close();">취소</button>
 						</form>
 					</td>
-				</tr>			
+				</tr>
 			</table>
-			</br>
-			<h2>입력값 메인화면 조회</h2>
-	<table id="board">
-	</br></br>
-		<tr>
-			<td>번호</td>
-			<td>입력값1</td>
-			<td>입력값2</td>
-			<td>입력값3</td>
-			<td>입력값4</td>
-			<td>입력값5</td>
-	        <td>합계</td>	
-		</tr>
-		<tbody>
-		<c:forEach var="i" items="${ iList }">
-		<tr>
-			<td>${ i.no }</td>
-			<td>${ i.inputValue1 }</td>
-			<td>${ i.inputValue2 } </td>
-			<td>${ i.inputValue3 }</td>		
-			<td>${ i.inputValue4 }</td>
-			<td>${ i.inputValue5 } </td>
-			<td>${ i.totalValue }</td>		
-		</tr>
-		</c:forEach>
-		</tbody>
-	</table></br></br>
 		</form>
 	</div>
 </body>

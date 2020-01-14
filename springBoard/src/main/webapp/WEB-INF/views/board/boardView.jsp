@@ -18,6 +18,10 @@
 	border: 1px solid #ccc;
 	width: 200px;
 }
+#inputVo td {
+	border: 1px solid #ccc;
+	width: 200px;
+}
 </style>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
@@ -25,8 +29,13 @@
 <body>
 <div id="container">
 <h2>메인화면 조회</h2>
+</br>
+	<button type="button" onclick="location.href='insertForm.do'">글쓰기</button>
+	<button type="button" onclick="location.href='excelDown.do'">엑셀 다운로드</button>
+    <button type="button" onclick="location.href='excelFormDown.do'">엑셀양식 다운로드</button>
+    <button type="button" id="btn" onclick="popupOpen('fileUpload.do')"> 엑셀 업로드 </button>
+    </br></br>
 	<table id="board">
-	</br></br>
 		<tr>
 			<td>번호</td>
 			<td>제목</td>
@@ -52,12 +61,34 @@
 		</tr>
 		</c:forEach>
 		</tbody>
-	</table></br></br>
-	<button type="button" onclick="location.href='insertForm.do'">글쓰기</button>
-	<button type="button" onclick="location.href='excelDown.do'">엑셀 다운로드</button>
-    <button type="button" onclick="location.href='excelFormDown.do'">엑셀양식 다운로드</button>
-    <button type="button" id="btn" onclick="popupOpen('fileUpload.do')"> 엑셀 업로드 </button>
+	</table>
+			<h2>입력값 메인화면 조회</h2>
     <button type="button" id="btn" onclick="popupOpen2('excelUpload.do')"> 입력값 합게 구하기 </button>   
+	</br></br>
+	<table id="inputVo">
+		<tr>
+			<td>번호</td>
+			<td>입력값1</td>
+			<td>입력값2</td>
+			<td>입력값3</td>
+			<td>입력값4</td>
+			<td>입력값5</td>
+	        <td>합계</td>	
+		</tr>
+		<tbody>
+		<c:forEach var="i" items="${ iList }">
+		<tr>
+			<td>${ i.no }</td>
+			<td>${ i.inputValue1 }</td>
+			<td>${ i.inputValue2 } </td>
+			<td>${ i.inputValue3 }</td>		
+			<td>${ i.inputValue4 }</td>
+			<td>${ i.inputValue5 } </td>
+			<td>${ i.totalValue }</td>		
+		</tr>
+		</c:forEach>
+		</tbody>
+	</table></br></br>
 </div>
 </body>
 <script>

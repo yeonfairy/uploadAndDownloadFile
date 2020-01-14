@@ -8,7 +8,7 @@
 		<result property="inputValue3" column="INPUT_VALUE3" />
 		<result property="inputValue4" column="INPUT_VALUE4" />
 		<result property="inputValue5" column="INPUT_VALUE5" />
-		<result property="totalValue" column="TOTAL_VALUE"/>
+		<result property="totalValue"  column="TOTAL_VALUE"/>
 	</resultMap>
 
 	<select id="selectInputList" resultMap="inputResultSet">
@@ -19,7 +19,7 @@
          , INPUT_VALUE4
          , INPUT_VALUE5
          , TOTAL_VALUE
-    FROM  TEST.INPUT_TB
+    FROM TEST.INPUT_TB
     ORDER BY NO DESC
 	</select>
 	<insert id="insertInputList" parameterType="InputVo">

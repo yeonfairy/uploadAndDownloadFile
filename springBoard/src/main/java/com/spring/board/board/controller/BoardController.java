@@ -46,12 +46,14 @@ public class BoardController {
 	private static List<Board> eList = new ArrayList<Board>();
 
 	@RequestMapping(value = "board.do")
-	public String boardView(Model model, Board boardVo) throws Exception {
+	public String boardView(Model model, Board boardVo, InputVo inputVo) throws Exception {
 
 		ArrayList<Board> bList = bService.selectBoardList();
 //		System.out.println("????" + bList);
 
 		model.addAttribute("bList", bList);
+		ArrayList<InputVo> iList = bService.selectInputList();
+		model.addAttribute("iList", iList);
 		List<Map<String, Object>> fileList = bService.selectFileList(boardVo.getBoardNo());
 		model.addAttribute("file", fileList);
 //		logger.info("board =================== ");
@@ -85,10 +87,13 @@ public class BoardController {
 	}
 	@ResponseBody
 	@RequestMapping(value = "excelUploadTotal.do", method = RequestMethod.POST)
-	public String excelUploadTotal(Model model, InputVo inputVo, MultipartHttpServletRequest request) throws Exception {
-		ArrayList<InputVo> iList = bService.selectInputList();
+	public String excelUploadTotal(InputVo inputVo, MultipartHttpServletRequest request) throws Exception {
+/*		ArrayList<InputVo> iList = bService.selectInputList();
 		model.addAttribute("iList", iList);
-		
+			if(iList.isEmpty()) {		
+			//리스트에 값이 존재하지 않음
+			System.out.println("List is empty");
+		}*/
 		MultipartFile excelFile = request.getFile("excelFile");
 		System.out.println("엑셀 파일 업로드 컨트롤러");
 	
@@ -97,6 +102,8 @@ public class BoardController {
 		}
 
 		File destFile = new File("D:\\" + excelFile.getOriginalFilename());
+		System.out.println("엑셀 파일 경로: " + excelFile.getOriginalFilename());
+	
 		try {
 			excelFile.transferTo(destFile);
 		} catch (IllegalStateException | IOException e) {
@@ -107,7 +114,7 @@ public class BoardController {
 
 	    destFile.delete();
 
-		return "board/boardView";
+		return "board/excelUploadTotal";
 	}
 
 	// 첨부파일 다운로드
@@ -308,7 +315,7 @@ public class BoardController {
 
 		bService.insertInputList(inputVo, mpRequest);
 
-		return "redirect:excelUploadTotal.do";
+		return "redirect:board.do";
 
 	}
 	

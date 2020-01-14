@@ -24,7 +24,7 @@
 	<insert id="insertBoard" parameterType="Board">
 		INSERT INTO TEST.BOARD_TB VALUES( SEQ_BOARD.NEXTVAL, #{ boardContent }, #{ boardTitle }, #{ boardWriter }, #{ boardCount }, DEFAULT )
 	</insert>
-
+	<!-- 엑셀 다운로드  -->
 	<insert id="insertBoardFile" parameterType="hashMap">
 		INSERT INTO MP_FILE(
 			FILE_NO,
@@ -70,7 +70,7 @@
 		WHERE BOARD_NO = A.BOARD_NO
 		AND A.BOARD_NO = #{ boardNo }
 	</select>
-	
+	<!-- 상세 게시판  -->
 	<select id="selectBoardOne" parameterType="int"
 		resultMap="boardResultSet">
 		SELECT A.*, (SELECT ORG_FILE_NAME FROM TEST.MP_FILE WHERE BOARD_NO = A.BOARD_NO
