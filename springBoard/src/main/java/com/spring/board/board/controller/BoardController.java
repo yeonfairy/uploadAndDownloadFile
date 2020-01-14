@@ -32,11 +32,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.board.board.model.service.BoardService;
 import com.spring.board.board.model.vo.Board;
-
+import com.spring.board.board.model.vo.InputVo;
 @Controller
 public class BoardController {
 
@@ -62,7 +61,7 @@ public class BoardController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/excelUploadAjax", method = RequestMethod.POST)
+	@RequestMapping(value = "excelUploadAjax.do", method = RequestMethod.POST)
 	public String excelUploadAjax(Board board, MultipartHttpServletRequest request) throws Exception {
 		MultipartFile excelFile = request.getFile("excelFile");
 		System.out.println("엑셀 파일 업로드 컨트롤러");
@@ -82,7 +81,33 @@ public class BoardController {
 
 	    destFile.delete();
 
-		return "board/FileUploadForm";
+		return "board/excelUploadAjax";
+	}
+	@ResponseBody
+	@RequestMapping(value = "excelUploadTotal.do", method = RequestMethod.POST)
+	public String excelUploadTotal(Model model, InputVo inputVo, MultipartHttpServletRequest request) throws Exception {
+		ArrayList<InputVo> iList = bService.selectInputList();
+		model.addAttribute("iList", iList);
+		
+		MultipartFile excelFile = request.getFile("excelFile");
+		System.out.println("엑셀 파일 업로드 컨트롤러");
+	
+		if (excelFile == null || excelFile.isEmpty()) {
+			throw new RuntimeException("엑셀파일을 선택 해 주세요.");
+		}
+
+		File destFile = new File("D:\\" + excelFile.getOriginalFilename());
+		try {
+			excelFile.transferTo(destFile);
+		} catch (IllegalStateException | IOException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		System.out.println("destFile :" + destFile);
+		bService.excelUpload2(inputVo, destFile);
+
+	    destFile.delete();
+
+		return "board/boardView";
 	}
 
 	// 첨부파일 다운로드
@@ -277,6 +302,16 @@ public class BoardController {
 
 	}
 
+	@RequestMapping(value = "inputListInsert.do", method = RequestMethod.POST)
+	public String inputListInsert(InputVo inputVo, MultipartHttpServletRequest mpRequest) throws Exception {
+		System.out.println("boardInsert.boardInsert::::::::::::::::::::::::::::::::::" + inputVo);
+
+		bService.insertInputList(inputVo, mpRequest);
+
+		return "redirect:excelUploadTotal.do";
+
+	}
+	
 	@RequestMapping("boardDetail.do")
 	public String boardDetail(int bNo, String inputPwd, Model model, Board boardVo, HttpServletRequest request)
 			throws Exception {
@@ -313,6 +348,12 @@ public class BoardController {
 	@RequestMapping(value = "fileUpload.do", method = RequestMethod.GET)
 	public String showForm(ModelMap model) {
 
-		return "board/FileUploadForm";
+		return "board/excelUploadAjax";
+	}
+	// 엑셀 업로드 형식
+	@RequestMapping(value = "excelUpload.do", method = RequestMethod.GET)
+	public String showForm2(ModelMap model) {
+
+		return "board/excelUploadTotal";
 	}
 }

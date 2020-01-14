@@ -8,10 +8,12 @@
 	<typeAliases>
 		<typeAlias type="com.spring.board.member.model.vo.Member" alias="Member" />
 		<typeAlias type="com.spring.board.board.model.vo.Board" alias="Board" />
+		<typeAlias type="com.spring.board.board.model.vo.InputVo" alias="InputVo" />
 	</typeAliases>
 	
 	<mappers>
 		<mapper resource="mapper/member-mapper.xml"/>
 		<mapper resource="mapper/board-mapper.xml" />
+		<mapper resource="mapper/input-mapper.xml" />
 	</mappers>
 </configuration>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="inputMapper">
+	<resultMap type="InputVo" id="inputResultSet">
+		<id property="no" column="NO" />
+		<result property="inputValue1" column="INPUT_VALUE1" />
+		<result property="inputValue2" column="INPUT_VALUE2" />
+		<result property="inputValue3" column="INPUT_VALUE3" />
+		<result property="inputValue4" column="INPUT_VALUE4" />
+		<result property="inputValue5" column="INPUT_VALUE5" />
+		<result property="totalValue" column="TOTAL_VALUE"/>
+	</resultMap>
+
+	<select id="selectInputList" resultMap="inputResultSet">
+	SELECT NO
+         , INPUT_VALUE1
+         , INPUT_VALUE2
+         , INPUT_VALUE3
+         , INPUT_VALUE4
+         , INPUT_VALUE5
+         , TOTAL_VALUE
+    FROM  TEST.INPUT_TB
+    ORDER BY NO DESC
+	</select>
+	<insert id="insertInputList" parameterType="InputVo">
+		INSERT INTO TEST.INPUT_TB VALUES( SEQ_INPUT.NEXTVAL, #{ inputValue1 }, #{ inputValue2 }, #{ inputValue3 }, #{ inputValue4 },  #{ inputValue5 }, #{ totalValue })
+	</insert>
+</mapper>

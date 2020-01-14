@@ -57,6 +57,7 @@
 	<button type="button" onclick="location.href='excelDown.do'">엑셀 다운로드</button>
     <button type="button" onclick="location.href='excelFormDown.do'">엑셀양식 다운로드</button>
     <button type="button" id="btn" onclick="popupOpen('fileUpload.do')"> 엑셀 업로드 </button>
+    <button type="button" id="btn" onclick="popupOpen2('excelUpload.do')"> 입력값 합게 구하기 </button>   
 </div>
 </body>
 <script>
@@ -68,6 +69,11 @@ function openWindow(num){
 <script type="text/javascript">
 function popupOpen(){
 	var popUrl = "fileUpload.do";	//팝업창에 출력될 페이지 URL
+	var popOption = "width=1000, height=700, resizable=no, scrollbars=no, status=no;";    //팝업창 옵션(optoin)
+		window.open(popUrl,"",popOption);
+	}
+function popupOpen2(){
+	var popUrl = "excelUpload.do";	//팝업창에 출력될 페이지 URL
 	var popOption = "width=1000, height=700, resizable=no, scrollbars=no, status=no;";    //팝업창 옵션(optoin)
 		window.open(popUrl,"",popOption);
 	}

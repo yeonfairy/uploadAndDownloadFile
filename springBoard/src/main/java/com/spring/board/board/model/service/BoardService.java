@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.board.board.model.dao.BoardDao;
 import com.spring.board.board.model.vo.Board;
+import com.spring.board.board.model.vo.InputVo;
 import com.spring.board.board.util.ExcelRead;
 import com.spring.board.board.util.ExcelReadOption;
 import com.spring.board.board.util.FileUtils;
@@ -40,6 +41,16 @@ public class BoardService {
 			bDao.insertBoardFile(list.get(i));
 		}
 	}
+	
+	public ArrayList<InputVo> selectInputList() {
+		return bDao.selectInputList();
+	}
+	
+	public void insertInputList(InputVo inputVo, MultipartHttpServletRequest mpRequest) throws Exception {
+		//게시글 추가
+		bDao.insertInputList(inputVo);
+	}
+	
 	//첨부파일 조회
 	public List<Map<String, Object>> selectFileList(int boardNo) throws Exception {
 		return bDao.selectFileList(boardNo);
@@ -76,6 +87,35 @@ public class BoardService {
             System.out.println(article.get("F"));
             boardVO.setBoardPwd(article.get("F"));
             bDao.insertBoard(boardVO);
+        }
+    }
+	//엑셀 업로드
+    public void excelUpload2(InputVo inputVo, File destFile) throws Exception{
+    	List<InputVo> ilist = bDao.selectInputList();
+        ExcelReadOption excelReadOption = new ExcelReadOption();
+        excelReadOption.setFilePath(destFile.getAbsolutePath());
+        excelReadOption.setOutputColumns("A","B","C","D","E","F","G");
+        excelReadOption.setStartRow(2);
+        
+        
+        List<Map<String, String>>excelContent =ExcelRead.read(excelReadOption);
+
+        for(Map<String, String> article: excelContent){
+            System.out.println(article.get("A"));
+            inputVo.setNo(Integer.parseInt(article.get("A")));
+            System.out.println(article.get("B"));
+            inputVo.setInputValue1(Integer.parseInt(article.get("B")));
+            System.out.println(article.get("C"));
+            inputVo.setInputValue2(Integer.parseInt(article.get("C")));
+            System.out.println(article.get("D"));
+            inputVo.setInputValue3(Integer.parseInt(article.get("D")));
+            System.out.println(article.get("E"));
+            inputVo.setInputValue4(Integer.parseInt(article.get("E")));
+            System.out.println(article.get("F"));
+            inputVo.setInputValue5(Integer.parseInt(article.get("F")));
+            System.out.println(article.get("G"));
+            inputVo.setTotalValue(Integer.parseInt(article.get("G")));
+            bDao.insertInputList(inputVo);
         }
     }
     
