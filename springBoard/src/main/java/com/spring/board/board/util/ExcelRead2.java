@@ -1,3 +1,4 @@
+
 package com.spring.board.board.util;
 
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ public class ExcelRead2 {
          * sheet에서 유효한(데이터가 있는) 행의 개수를 가져온다.
          */
         int numOfRows = sheet.getPhysicalNumberOfRows();
-        System.out.println("sheet에서 유효한(데이터가 있는) 행의 개수 :" + sheet.getPhysicalNumberOfRows());
         int numOfCells = 0;
         
         Row row = null;
@@ -60,7 +60,7 @@ public class ExcelRead2 {
                 /*
                  * 가져온 Row의 Cell의 개수를 구한다.
                  */
-                numOfCells = row.getPhysicalNumberOfCells();
+                numOfCells = row.getLastCellNum();
                 /*
                  * 데이터를 담을 맵 객체 초기화
                  */
@@ -90,15 +90,13 @@ public class ExcelRead2 {
                      * map객체의 Cell의 이름을 키(Key)로 데이터를 담는다.
                      */
                     map.put(cellName, ExcelCellRef.getValue(cell));
-                    System.out.println("ExcelCellRef:" + ExcelCellRef.getValue(cell));
                 }
                 /*
                  * 만들어진 Map객체를 List로 넣는다.
                  */
                 result.add(map);   
-                System.out.println("result:" + result.add(map));
             }   
         }
         return result;        
     }
-}
+} 
