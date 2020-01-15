@@ -103,22 +103,32 @@ public class BoardService {
         System.out.println("ExcelRead2.read(excelReadOption):" + ExcelRead2.read2(excelReadOption));
         List<String> ilist = new ArrayList();
     
+        	int sum = 0;
+        	int total = 0;
+        	
         for(Map<String, String> article: excelContent){
         	System.out.println("excelContent : "+excelContent+ "article : "+article);
+//            System.out.println(article.get("A"));
+            inputVo.setNo(0);
             System.out.println(article.get("A"));
-            inputVo.setNo(Integer.parseInt(article.get("A")));
+            inputVo.setInputValue1(Integer.parseInt(article.get("A")));
             System.out.println(article.get("B"));
-            inputVo.setInputValue1(Integer.parseInt(article.get("B")));
+            inputVo.setInputValue2(Integer.parseInt(article.get("B")));
             System.out.println(article.get("C"));
-            inputVo.setInputValue2(Integer.parseInt(article.get("C")));
+            inputVo.setInputValue3(Integer.parseInt(article.get("C")));
             System.out.println(article.get("D"));
-            inputVo.setInputValue3(Integer.parseInt(article.get("D")));
+            inputVo.setInputValue4(Integer.parseInt(article.get("D")));
             System.out.println(article.get("E"));
-            inputVo.setInputValue4(Integer.parseInt(article.get("E")));
-            System.out.println(article.get("F"));
-            inputVo.setInputValue5(Integer.parseInt(article.get("F")));
-            System.out.println(article.get("G"));
-            inputVo.setTotalValue(Integer.parseInt(article.get("G")));
+            inputVo.setInputValue5(Integer.parseInt(article.get("E")));
+ //           System.out.println(article.get("F"));
+//            inputVo.setTotalValue(Integer.parseInt(article.get("G")));
+            //합계 + 구하기
+            sum = inputVo.getInputValue1() + inputVo.getInputValue2() + inputVo.getInputValue3() +  inputVo.getInputValue4()
+            		+  inputVo.getInputValue5();
+            inputVo.setTotalValue(sum);
+            System.out.println(sum);
+
+
             System.out.println("DDD :"+inputVo.getInputValue1());
             
             bDao.insertInputList(inputVo);
