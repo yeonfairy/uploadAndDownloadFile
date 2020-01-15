@@ -86,8 +86,8 @@ public class BoardController {
 		return "board/excelUploadAjax";
 	}
 	@ResponseBody
-	@RequestMapping(value = "excelUploadTotal.do", method = RequestMethod.POST)
-	public String excelUploadTotal(InputVo inputVo, MultipartHttpServletRequest request) throws Exception {
+	@RequestMapping(value = "excelUploadTotal.do")
+	public void excelUploadTotal(InputVo inputVo, MultipartHttpServletRequest request) throws Exception {
 /*		ArrayList<InputVo> iList = bService.selectInputList();
 		model.addAttribute("iList", iList);
 			if(iList.isEmpty()) {		
@@ -113,8 +113,37 @@ public class BoardController {
 		bService.excelUpload2(inputVo, destFile);
 
 	    destFile.delete();
+	}
+	
+	@RequestMapping(value = "excelUploadTotal2.do")
+	public String excelUploadTotal2(InputVo inputVo, MultipartHttpServletRequest request) throws Exception {
+/*		ArrayList<InputVo> iList = bService.selectInputList();
+		model.addAttribute("iList", iList);
+			if(iList.isEmpty()) {		
+			//리스트에 값이 존재하지 않음
+			System.out.println("List is empty");
+		}*/
+		MultipartFile excelFile = request.getFile("excelFile");
+		System.out.println("엑셀 파일 업로드 컨트롤러");
+	
+		if (excelFile == null || excelFile.isEmpty()) {
+			throw new RuntimeException("엑셀파일을 선택 해 주세요.");
+		}
 
-		return "board/excelUploadTotal";
+		File destFile = new File("D:\\" + excelFile.getOriginalFilename());
+		System.out.println("엑셀 파일 경로: " + excelFile.getOriginalFilename());
+	
+		try {
+			excelFile.transferTo(destFile);
+		} catch (IllegalStateException | IOException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		System.out.println("destFile :" + destFile);
+		bService.excelUpload2(inputVo, destFile);
+
+	    destFile.delete();
+	    
+	    return "board/test";
 	}
 
 	// 첨부파일 다운로드
@@ -354,13 +383,19 @@ public class BoardController {
 	// 엑셀 업로드 형식
 	@RequestMapping(value = "fileUpload.do", method = RequestMethod.GET)
 	public String showForm(ModelMap model) {
-
 		return "board/excelUploadAjax";
 	}
 	// 엑셀 업로드 형식
 	@RequestMapping(value = "excelUpload.do", method = RequestMethod.GET)
 	public String showForm2(ModelMap model) {
-
-		return "board/excelUploadTotal";
+		System.out.println("board/excelUploadTotal2: ");
+		return "board/excelUploadTotal2";
+	}
+	
+	// 엑셀 업로드 형식
+	@RequestMapping(value = "test.do", method = RequestMethod.GET)
+	public String test(ModelMap model) {
+		System.out.println("board/excelUploadTotal: ");
+		return "board/test";
 	}
 }

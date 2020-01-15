@@ -25,6 +25,7 @@
 </style>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
 </head>
 <body>
 <div id="container">
@@ -95,6 +96,7 @@
 var winObject = null ;
 function openWindow(num){
 	windObject = window.open("checkPwd.do?bNo="+num, null, "width=300 height=200");
+	window.location.reload(true);
 }
 </script>
 <script type="text/javascript">
